@@ -12,7 +12,8 @@ A Python to-do list with some basic functionality - it can save, load, open in d
 - Functions for loading/saving work by creating and modifying a text file in the same directory as the script is called from.
 - This could be reworked or the "save file" hidden but for my purposes being able to go in and edit an actual text file is a boon, not a problem to fix.
 - The save file and image logo need to be in the same location as the script is called from. Bear this in mind if you're opening it via something else (i.e. another script)
-- The uploaded version was a specific branch of the original file that used a custom dialogue box to let you select and copy text from to-do items, hence the filename. (Will fix later)
+- Ability to edit existing entries for correction/updating added.
 
 # Live long and prosper.
+(Or don't, I'm not your boss.)
  - J.
