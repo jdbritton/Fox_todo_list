@@ -1,9 +1,9 @@
 ###############################################################################
 # Fox Co. To-Do List
 # Created initially by James Britton
-# Ver 0.7
+# Ver 0.9.5
 # First created: 27/12/2020
-# Last update: 03/01/2021
+# Last update: 01/03/2021
 # Desc: To-do list with basic functionality and ability to save stuff.
 ###############################################################################
 
@@ -34,12 +34,30 @@ class CustomDialog(tkinter.simpledialog.Dialog, Text):
     def __init__(self, parent, title=None, text=None):
         self.data = text
         tkinter.simpledialog.Dialog.__init__(self, parent, title=title)
+    
+    def buttonbox(self):
+        box = Frame(self)
+        w = Button(box, text="Change", width=10, command=self.update)
+        w.pack(side=LEFT, padx=5, pady=5)
+        w = Button(box, text="Close", width=10, command=self.cancel, default=ACTIVE)
+        w.pack(side=LEFT, padx=5, pady=5)
+#        self.bind("<Return>", self.update)
+        self.bind("<Escape>", self.cancel)
+        box.pack()
 
     def body(self, parent):
         self.text = tkinter.Text(self, width=75, height=15)
         self.text.pack(fill="both", expand=True)
         self.text.insert("1.0", self.data)
         return self.text
+
+    def update(self):
+        global changetask
+        self.currenttext = self.text.get('0.0',"end")
+        changetask = self.currenttext 
+        update_task(changetask)
+        self.ok()
+
 
 
 ###############################################################################
@@ -49,6 +67,8 @@ class CustomDialog(tkinter.simpledialog.Dialog, Text):
 def update_taskbox():
     # Clear what's in there currently:
     clear_task_func()
+    while("" in tasks): 
+       tasks.remove("") 
     # Populate the visual listbox:
     for task in tasks:
         lb_tasks.insert("end", task)
@@ -134,6 +154,8 @@ def resource_path(relative_path):
 def save_tasks():
     confirm = messagebox.askyesno("Confirm: save?", "Would you like to save? This will overwrite the currently existing file, if it exists.")
     if confirm:
+        while("" in tasks): 
+            tasks.remove("")
         with open("todo_tasks_fox.txt", "w") as f: # The save-file is a text file loaded as "f"
             for s in tasks:
                 f.write(str(s) +"\n")
@@ -158,6 +180,17 @@ def show_dialog(task): # this opens the copy-able dialogue box
         detail_text = task
         CustomDialog(root, title="Detail view", text=detail_text)
 
+def update_task(changetask):
+        task = lb_tasks.get("active")
+        tasks.remove(task)
+        tasks.insert(0,changetask)
+        update_taskbox()
+        task = ""
+        changetask = ""
+
+
+
+
 ###############################################################################
 # Main window:
 ###############################################################################
@@ -165,7 +198,7 @@ def show_dialog(task): # this opens the copy-able dialogue box
 root = tkinter.Tk()
 root.configure()
 root.title("Fox Co. To-Do List.")
-root.geometry("678x475")
+root.geometry("680x460")
 
 title_font = font.Font(family='Consolas', size=14)
 lbl_title = tkinter.Label(root, text="Fox Co. To-Do List", font="title_font")
@@ -234,7 +267,7 @@ btn_load_tasks = tkinter.Button(root, text="Load tasks?", command=load_tasks,fg=
 btn_load_tasks.grid(row=17,column=1, sticky="e")
 
 # Quit button, hence the colors.
-btn_quit = tkinter.Button(root, text="      Quit     ", command=Quit, fg="red", bg="black")
+btn_quit = tkinter.Button(root, text="      Quit      ", command=Quit, fg="red", bg="black")
 btn_quit.grid(row=18,column=0, sticky="w")
 
 # Main loop.
